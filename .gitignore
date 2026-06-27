@@ -1,0 +1,31 @@
+# === OS が生成するゴミファイル ===
+.DS_Store              # macOS
+Thumbs.db              # Windows
+desktop.ini            # Windows
+*:Zone.Identifier      # WSLでWindowsから来たファイルに付く属性
+
+# === エディタ・ツールの一時ファイル ===
+*~                     # vim/emacs のバックアップ
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# === install.sh が作るバックアップ ===
+*.bak
+
+# === ローカル専用・環境固有ファイル ===
+*.local
+.env
+.env.*
+*_secret*
+*.token
+*.pem
+*.key
+
+# === 履歴・キャッシュ系 ===
+.bash_history
+.lesshst
+.python_history
+
+bash/
