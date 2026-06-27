@@ -29,6 +29,23 @@ link() {
 # --- どの環境でも: tmux は symlink ---
 link "$DOTFILES/tmux/.tmux.conf" "$HOME/.tmux.conf"
 
+# --- bash: dotfilesのbashスニペットを ~/.bashrc から読み込む（冪等）---
+# マーカーで囲んだブロックを ~/.bashrc に1度だけ追記する
+BASHRC="$HOME/.bashrc"
+MARKER_BEGIN="# >>> dotfiles bash >>>"
+MARKER_END="# <<< dotfiles bash <<<"
+if [ -f "$BASHRC" ] && grep -qF "$MARKER_BEGIN" "$BASHRC"; then
+  echo "skip:   ~/.bashrc は既に dotfiles ブロックあり"
+else
+  {
+    echo ""
+    echo "$MARKER_BEGIN"
+    echo "for f in \"$DOTFILES/bash/\"*.sh; do [ -r \"\$f\" ] && . \"\$f\"; done"
+    echo "$MARKER_END"
+  } >> "$BASHRC"
+  echo "append: dotfiles bash ブロックを ~/.bashrc に追記"
+fi
+
 # --- wezterm: 環境ごとに配置方法を変える ---
 case "$OS" in
   mac|linux)
