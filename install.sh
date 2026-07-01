@@ -29,6 +29,13 @@ link() {
 # --- どの環境でも: tmux は symlink ---
 link "$DOTFILES/tmux/.tmux.conf" "$HOME/.tmux.conf"
 
+# --- どの環境でも: bin/ の実行スクリプトを ~/.local/bin に symlink ---
+if [ -d "$DOTFILES/bin" ]; then
+  for f in "$DOTFILES/bin/"*; do
+    [ -f "$f" ] && link "$f" "$HOME/.local/bin/$(basename "$f")"
+  done
+fi
+
 # --- bash: dotfilesのbashスニペットを ~/.bashrc から読み込む（冪等）---
 # マーカーで囲んだブロックを ~/.bashrc に1度だけ追記する
 BASHRC="$HOME/.bashrc"

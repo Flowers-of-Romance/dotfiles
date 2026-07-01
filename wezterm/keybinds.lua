@@ -61,12 +61,13 @@ return {
     { key = "w", mods = "CTRL", action = act({ CloseCurrentTab = { confirm = true } }) },
     { key = "}", mods = "LEADER", action = act({ MoveTabRelative = 1 }) },
 
-    -- WSL + tmux で claude を起動（カーソルちらつき対策付き）leader + g
+    -- WSL + tmux で claude を起動 leader + g
+    -- 起動時にセッション選択メニューを出す（既存にattach or 新規作成）
     {
       key = "g",
       mods = "LEADER",
       action = act.SpawnCommandInNewTab({
-        args = { "wsl.exe", "~", "--", "bash", "-lc", 'tmux new -A -s "claude-$$" "claude --dangerously-skip-permissions; exec bash"' },
+        args = { "wsl.exe", "~", "--", "bash", "-lc", '~/.local/bin/claude-pick' },
       }),
     },
 
