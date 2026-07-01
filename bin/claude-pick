@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# claude セッションピッカー
+# WezTerm の LEADER+g から呼ばれる。既存の tmux セッション一覧を出し、
+# 選べば attach、[新規] を選べば新しいセッションで claude を起動する。
+set -u
+
+CLAUDE_CMD='claude --dangerously-skip-permissions; exec bash'
+
+# 既存セッション一覧（新しい順）
+mapfile -t sessions < <(tmux list-sessions -F '#S' 2>/dev/null)
+
+echo "== claude セッションを選択 =="
+if ((${#sessions[@]})); then
+  printf '  既存: %s\n' "${sessions[*]}"
+fi
+echo
+
+PS3=$'\n選択 (番号): '
+options=("${sessions[@]}" "[新規セッション]" "[キャンセル]")
+select opt in "${options[@]}"; do
+  case "${opt:-}" in
+    "")
+      echo "無効な選択です。番号で入力してください。" ;;
+    "[キャンセル]")
+      exit 0 ;;
+    "[新規セッション]")
+      read -rp "新セッション名 (空欄=自動): " name
+      if [[ -z "${name// /}" ]]; then
+        name="claude-$$"
+      fi
+      # 同名があれば衝突を避けて連番を付ける
+      base="$name"; n=1
+      while tmux has-session -t "=$name" 2>/dev/null; do
+        name="${base}-${n}"; ((n++))
+      done
+      exec tmux new -s "$name" "$CLAUDE_CMD" ;;
+    *)
+      exec tmux attach -t "=$opt" ;;
+  esac
+done
