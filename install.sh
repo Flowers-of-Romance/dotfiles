@@ -29,6 +29,14 @@ link() {
 # --- どの環境でも: tmux は symlink ---
 link "$DOTFILES/tmux/.tmux.conf" "$HOME/.tmux.conf"
 
+# --- どの環境でも: Claude Code のキーバインド ---
+link "$DOTFILES/claude/keybindings.json" "$HOME/.claude/keybindings.json"
+
+# --- mac: Karabiner はGUIが設定ファイルを書き換えるためディレクトリごと symlink ---
+if [ "$OS" = mac ]; then
+  link "$DOTFILES/karabiner" "$HOME/.config/karabiner"
+fi
+
 # --- どの環境でも: bin/ の実行スクリプトを ~/.local/bin に symlink ---
 if [ -d "$DOTFILES/bin" ]; then
   for f in "$DOTFILES/bin/"*; do
