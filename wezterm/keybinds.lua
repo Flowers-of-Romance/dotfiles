@@ -1,6 +1,9 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
+local triple = wezterm.target_triple
+local is_windows = triple:find("windows") ~= nil
+
 -- Show which key table is active in the status area
 wezterm.on("update-right-status", function(window, pane)
   local name = window:active_key_table()
@@ -61,18 +64,24 @@ return {
     { key = "w", mods = "CTRL", action = act({ CloseCurrentTab = { confirm = true } }) },
     { key = "}", mods = "LEADER", action = act({ MoveTabRelative = 1 }) },
 
-    -- WSL + tmux で claude を起動 leader + g
+    -- claude を起動 leader + g（Windowsは WSL 経由、それ以外はネイティブ bash）
     -- 起動時にセッション選択メニューを出す（既存にattach or 新規作成）
     {
       key = "g",
       mods = "LEADER",
-      action = act.SpawnCommandInNewTab({
-        args = { "wsl.exe", "~", "--", "bash", "-lc", '~/.local/bin/claude-pick' },
-      }),
+      action = is_windows
+        and act.SpawnCommandInNewTab({
+          args = { "wsl.exe", "~", "--", "bash", "-lc", "~/.local/bin/claude-pick" },
+        })
+        or act.SpawnCommandInNewTab({
+          args = { "bash", "-lc", "~/.local/bin/claude-pick" },
+        }),
     },
 
     -- 画面フルスクリーン切り替え
     { key = "Enter", mods = "ALT", action = act.ToggleFullScreen },
+    -- Ctrl+Enter で改行 (ESC+CR を送る。Claude Code等がAlt+Enter相当の改行として解釈)
+    { key = "Enter", mods = "CTRL", action = act.SendString("\x1b\r") },
 
     -- コピーモード
     { key = "[", mods = "LEADER", action = act.ActivateCopyMode },
