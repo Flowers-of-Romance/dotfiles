@@ -61,6 +61,26 @@ else
   echo "append: dotfiles bash ブロックを ~/.bashrc に追記"
 fi
 
+# --- git: 共有 gitconfig (delta + alias) を ~/.gitconfig から include（冪等）---
+GIT_INC="$HOME/dotfiles/git/delta.inc"
+if git config --global --get-all include.path 2>/dev/null | grep -qxF "~/dotfiles/git/delta.inc"; then
+  echo "skip:   ~/.gitconfig に既に git/delta.inc の include あり"
+else
+  git config --global --add include.path "~/dotfiles/git/delta.inc"
+  echo "add:    include.path ~/dotfiles/git/delta.inc を ~/.gitconfig に追加"
+fi
+
+# --- git-delta（差分ビューア）を OS ごとに導入 ---
+if command -v delta >/dev/null 2>&1; then
+  echo "skip:   git-delta は既に導入済み ($(delta --version))"
+else
+  case "$OS" in
+    wsl|linux) sudo apt-get install -y git-delta ;;
+    mac)       brew install git-delta ;;
+    *)         echo "skip:   未対応OSのため git-delta はスキップ" ;;
+  esac
+fi
+
 # --- wezterm: 環境ごとに配置方法を変える ---
 case "$OS" in
   mac|linux)
