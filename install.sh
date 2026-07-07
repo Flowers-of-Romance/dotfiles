@@ -62,12 +62,12 @@ else
 fi
 
 # --- git: 共有 gitconfig (delta + alias) を ~/.gitconfig から include（冪等）---
-GIT_INC="$HOME/dotfiles/git/delta.inc"
-if git config --global --get-all include.path 2>/dev/null | grep -qxF "~/dotfiles/git/delta.inc"; then
+GIT_INC="$DOTFILES/git/delta.inc"
+if git config --global --get-all include.path 2>/dev/null | grep -qxF "$GIT_INC"; then
   echo "skip:   ~/.gitconfig に既に git/delta.inc の include あり"
 else
-  git config --global --add include.path "~/dotfiles/git/delta.inc"
-  echo "add:    include.path ~/dotfiles/git/delta.inc を ~/.gitconfig に追加"
+  git config --global --add include.path "$GIT_INC"
+  echo "add:    include.path $GIT_INC を ~/.gitconfig に追加"
 fi
 
 # --- git-delta（差分ビューア）を OS ごとに導入 ---
