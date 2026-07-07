@@ -17,7 +17,7 @@ fi
 echo
 
 PS3=$'\n選択 (番号): '
-options=("${sessions[@]}" "[新規セッション]" "[キャンセル]")
+options=("[新規セッション]" "${sessions[@]}" "[キャンセル]")
 select opt in "${options[@]}"; do
   case "${opt:-}" in
     "")
@@ -25,15 +25,19 @@ select opt in "${options[@]}"; do
     "[キャンセル]")
       exit 0 ;;
     "[新規セッション]")
-      read -rp "新セッション名 (空欄=自動): " name
+      read -rp "新セッション名 (空欄=自動連番): " name
       if [[ -z "${name// /}" ]]; then
-        name="claude-$$"
+        # 空欄なら 1 から空いている最小の番号を割り当てる (1, 2, 3, ...)
+        n=1
+        while tmux has-session -t "=$n" 2>/dev/null; do ((n++)); done
+        name="$n"
+      else
+        # 明示名が既存と衝突する場合のみ連番サフィックスを付ける
+        base="$name"; n=1
+        while tmux has-session -t "=$name" 2>/dev/null; do
+          name="${base}-${n}"; ((n++))
+        done
       fi
-      # 同名があれば衝突を避けて連番を付ける
-      base="$name"; n=1
-      while tmux has-session -t "=$name" 2>/dev/null; do
-        name="${base}-${n}"; ((n++))
-      done
       exec tmux new -s "$name" "$CLAUDE_CMD" ;;
     *)
       exec tmux attach -t "=$opt" ;;
