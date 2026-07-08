@@ -107,4 +107,16 @@ case "$OS" in
     ;;
 esac
 
+# --- mac: システムのキーボードショートカット(Mission Control等)を復元 ---
+# symbolichotkeys は cfprefsd がメモリ管理して実ファイルを書き換えるため
+# symlink は不可。defaults import で流し込む方式にする。
+if [ "$OS" = mac ]; then
+  HOTKEYS="$DOTFILES/macos/symbolichotkeys.plist"
+  if [ -f "$HOTKEYS" ]; then
+    defaults import com.apple.symbolichotkeys "$HOTKEYS"
+    /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true
+    echo "import: com.apple.symbolichotkeys <- $HOTKEYS"
+  fi
+fi
+
 echo "done."
