@@ -60,11 +60,16 @@ config.window_frame = {
 -- }
 
 config.show_new_tab_button_in_tab_bar = false
--- 各タブの閉じるボタンを非表示にするオプション (nightly限定。安定版20240203には無いため無効化)
--- config.show_close_tab_button_in_tabs = false
+-- タブの閉じるボタン(×)を消すため retro タブバーにする
+-- (fancy 側で消せる show_close_tab_button_in_tabs は nightly 限定で安定版20240203に無い)
+config.use_fancy_tab_bar = false
+-- タブ1つあたりの最大幅（セル数）。タイトルが読める程度に少し広める
+config.tab_max_width = 24
 
 config.colors = {
   tab_bar = {
+    -- retro タブバーの帯を透過に（背景の透過/ブラーを隠さない）
+    background = "none",
     inactive_tab_edge = "none",
   },
 }
@@ -81,7 +86,9 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
     foreground = "#FFFFFF"
   end
   local edge_foreground = background
-  local title = "   " .. wezterm.truncate_right(tab.active_pane.title, max_width - 1) .. "   "
+  -- retro タブバーは max_width を超えた分を右から切り捨てるので、
+  -- 半円2セル + タイトル前後の余白2セル + 区切り1セル込みで max_width に収める
+  local title = " " .. wezterm.truncate_right(tab.active_pane.title, max_width - 5) .. " "
   return {
     { Background = { Color = edge_background } },
     { Foreground = { Color = edge_foreground } },
@@ -92,6 +99,9 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
     { Background = { Color = edge_background } },
     { Foreground = { Color = edge_foreground } },
     { Text = SOLID_RIGHT_ARROW },
+    -- タブ間の区切り（透明1セル）
+    { Background = { Color = edge_background } },
+    { Text = " " },
   }
 end)
 
