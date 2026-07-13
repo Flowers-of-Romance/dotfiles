@@ -81,6 +81,35 @@ else
   esac
 fi
 
+# --- starship（プロンプト）を OS ごとに導入 ---
+if command -v starship >/dev/null 2>&1; then
+  echo "skip:   starship は既に導入済み ($(starship --version | head -1))"
+else
+  case "$OS" in
+    mac)       brew install starship ;;
+    wsl|linux) curl -sS https://starship.rs/install.sh | sh -s -- -y ;;
+    *)         echo "skip:   未対応OSのため starship はスキップ" ;;
+  esac
+fi
+
+# --- starship: 設定は symlink、zsh には init を追記（冪等） ---
+# bash側は bash/starship.sh が ~/.bashrc 経由で読まれるので追記不要
+link "$DOTFILES/starship/starship.toml" "$HOME/.config/starship.toml"
+
+ZSHRC="$HOME/.zshrc"
+if [ -f "$ZSHRC" ] && grep -qF "starship init zsh" "$ZSHRC"; then
+  echo "skip:   ~/.zshrc は既に starship init あり"
+else
+  {
+    echo ""
+    echo "# starship prompt"
+    echo 'if command -v starship &> /dev/null; then'
+    echo '  eval "$(starship init zsh)"'
+    echo 'fi'
+  } >> "$ZSHRC"
+  echo "append: starship init を ~/.zshrc に追記"
+fi
+
 # --- wezterm: 環境ごとに配置方法を変える ---
 case "$OS" in
   mac|linux)
