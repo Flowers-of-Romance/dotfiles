@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: shellcheck (シェルスクリプト検査)
+        run: shellcheck --severity=warning install.sh bash/*.sh sakura/restore.sh
+
+      - name: JSON validity (設定ファイルが壊れていないか)
+        run: |
+          git ls-files '*.json' | while read -r f; do
+            python3 -m json.tool "$f" > /dev/null || { echo "invalid JSON: $f"; exit 1; }
+          done
