@@ -31,6 +31,7 @@ cd ~/dotfiles
 |------|-------------|-----|
 | tmux | symlink | symlink |
 | starship | symlink (`~/.config/starship.toml`) | symlink |
+| claude | symlink (`~/.claude/settings.json`, `scripts/`, `keybindings.json`) | symlink |
 | wezterm | symlink (`~/.config/wezterm/`) | **コピー** (`/mnt/c/Users/<user>/.config/wezterm/`) |
 
 - **tmux** はsymlinkなので、`~/dotfiles/` の中を編集すれば即反映。

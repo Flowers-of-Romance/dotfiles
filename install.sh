@@ -29,8 +29,12 @@ link() {
 # --- どの環境でも: tmux は symlink ---
 link "$DOTFILES/tmux/.tmux.conf" "$HOME/.tmux.conf"
 
-# --- どの環境でも: Claude Code のキーバインド ---
+# --- どの環境でも: Claude Code の設定一式 ---
+# settings.json はモデル/statusline/プラグイン有効化を含む。
+# プラグインは settings.json の enabledPlugins から各マシンで自動インストールされる
 link "$DOTFILES/claude/keybindings.json" "$HOME/.claude/keybindings.json"
+link "$DOTFILES/claude/settings.json"    "$HOME/.claude/settings.json"
+link "$DOTFILES/claude/scripts"          "$HOME/.claude/scripts"
 
 # --- mac: Karabiner はGUIが設定ファイルを書き換えるためディレクトリごと symlink ---
 if [ "$OS" = mac ]; then
