@@ -1,2 +1,3 @@
 automatic_backups/
 *.bak*
+scripts/.win-snap-state.json
