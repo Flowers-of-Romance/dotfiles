@@ -1,28 +1,52 @@
 {
+  "env": {
+    "CLAUDE_CODE_DISABLE_TERMINAL_TITLE": "1"
+  },
   "model": "claude-fable-5[1m]",
-  "hooks": {},
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/claude-config/hooks/spool_write.py\""
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/claude-config/hooks/session_start.sh\""
+          }
+        ]
+      }
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "python3 ~/.claude/scripts/statusline.py"
   },
   "enabledPlugins": {
     "clangd-lsp@claude-plugins-official": true,
-    "swift-lsp@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true,
+    "claude-guardrails@0x006a6d": true,
     "codex@openai-codex": true,
-    "claude-guardrails@0x006a6d": true
+    "frontend-design@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
-    "openai-codex": {
-      "source": {
-        "source": "github",
-        "repo": "openai/codex-plugin-cc"
-      }
-    },
     "0x006a6d": {
       "source": {
         "source": "github",
         "repo": "0x006a6d/claude-guardrails"
+      }
+    },
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
       }
     }
   },
